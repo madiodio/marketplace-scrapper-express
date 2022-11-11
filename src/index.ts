@@ -1,22 +1,17 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application } from 'express';
 import bodyParser from 'body-parser';
+
+import { getOpenGraphTags } from './scrappers';
+
 const app: Application = express();
-const PORT = 3000;
+const PORT = 8000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', async (req: Request, res: Response): Promise<Response> => {
-  return res.status(200).send({
-    message: 'Hello World!',
-  });
-});
-
-app.post('/post', async (req: Request, res: Response): Promise<Response> => {
-  console.log(req.body);
-  return res.status(200).send({
-    message: 'Hello World from post!',
-  });
+app.get('/scrapper', async (req: any, res) => {
+  const response = await getOpenGraphTags({ url: decodeURI(req.query.url) });
+  res.status(200).send({ data: response });
 });
 
 try {
